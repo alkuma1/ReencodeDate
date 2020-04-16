@@ -1,6 +1,3 @@
-// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-
 // ReencodeDate.cpp : Defines the entry point for the console application.
 //
 
@@ -280,7 +277,7 @@ void RenameFiles(vector<FileData>& files)
 					newFullPath += strToAppend;
 				}
 			}
-			std::cout << file.oldFileName << " --> " << fs::path(newFullPath).filename() << std::endl;
+			std::cout << "\"" << file.oldFileName <<  "\"" << " --> " << fs::path(newFullPath).filename() << std::endl;
 			if (!bTest) {
 				fs::rename(file.oldFullPath, newFullPath, ec);
 				if (ec) {
