@@ -32,12 +32,12 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ReencodeDate.cpp">
+    <ClCompile Include="time2name.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="ReencodeDate.rc">
+    <ResourceCompile Include="time2name.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

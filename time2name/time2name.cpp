@@ -57,10 +57,12 @@ CGdiPlus g_GdiPlus;
 struct FileData {
 	string oldFullPath;
 	string oldFileName;
+	string Ext;
 	string newFileName;
 	FileData() {
 		oldFullPath = "";
 		oldFileName = "";
+		Ext = "";
 		newFileName = "";
 	}
 };
@@ -111,7 +113,6 @@ bool ReadMetadata(const WCHAR * fileName, tm& t)
 	{
 		if (PropertyTagExifDTOrig /*0x9003*/ == pPropBuffer[j].id)
 		{
-			printf("The date is %s.\n", pPropBuffer[j].value);
 			sscanf((const char *)(pPropBuffer[j].value),
 				"%04d:%02d:%02d %02d:%02d:%02d",
 				&t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec);
@@ -231,6 +232,7 @@ template < typename IteratorT > void ListFiles (const fs::path& root, const stri
 			FileData file;
 			file.oldFullPath = it->path().string();
 			file.oldFileName = it->path().filename().string();
+			file.Ext = it->path().extension().string();
 			ret.push_back(file);
 		}
 		++it;
@@ -264,20 +266,19 @@ void RenameFiles(vector<FileData>& files)
 {
 	for (const auto& file : files) {
 		if (file.newFileName.length() && file.oldFileName != file.newFileName ) {
-			auto newFullPath = file.oldFullPath;
-			boost::replace_last(newFullPath, file.oldFileName, file.newFileName);
+			auto newFullPathTemplate = file.oldFullPath;
+			boost::replace_last(newFullPathTemplate, file.oldFileName, "???");
+			auto newFileName = file.newFileName;
+			auto newFullPath = newFullPathTemplate;
+			boost::replace_last(newFullPath, "???", newFileName + file.Ext);
 			boost::system::error_code ec;
 			while (fs::exists(newFullPath)) {
-				string strToAppend = "_" + std::to_string(GetTickCount());
-				int pos = newFullPath.find_last_of('.');
-				if (string::npos != pos) {
-					newFullPath.insert(pos, strToAppend);
-				}
-				else {
-					newFullPath += strToAppend;
-				}
+				newFileName += ("_" + std::to_string(GetTickCount()));
+				newFullPath = newFullPathTemplate;
+				boost::replace_last(newFullPath, "???", newFileName + file.Ext);
 			}
-			std::cout << "\"" << file.oldFileName <<  "\"" << " --> " << fs::path(newFullPath).filename() << std::endl;
+			std::cout << file.oldFileName << " --> " << newFileName << file.Ext << std::endl;
+
 			if (!bTest) {
 				fs::rename(file.oldFullPath, newFullPath, ec);
 				if (ec) {
@@ -361,14 +362,6 @@ void ParseCommandLine(int argc, char* argv[])
 int _tmain(int argc, char* argv[])
 {
 	vector < FileData > files;
-	/*
-		DecodeDate("abcY031999", "abcY%M%D%y", t);
-		string s = EncodeDate("xyz_%D_%M_%y_%Y", t);
-		printf("%s\n", s.c_str());
-		DecodeDate("abcM031911", "abcM%y%D%M", t);
-		s = EncodeDate("xyz_%D_%M_%y_%Y", t);
-		printf("%s\n", s.c_str());
-	*/
 
 	try {
 		ParseCommandLine(argc, argv);
@@ -388,7 +381,7 @@ int _tmain(int argc, char* argv[])
 			if (bInputContainsPlaceholders) {
 				DecodeDate(file.oldFileName, InputFormat, t);
 			}
-			else if (fs::path(file.oldFullPath).extension() == ".jpg") {
+			else if (file.Ext == ".jpg") {
 				ReadDateFromEXIF(file.oldFullPath, t);
 			}
 			else if (bUseFileLastWriteTime) {
@@ -403,7 +396,7 @@ int _tmain(int argc, char* argv[])
 					t.tm_year = t.tm_year % 100 + 2000;
 			}
 			if (!memcmp(&t, &tZero, sizeof(tm))) {
-				cout << "No time information found" << "\n";
+				cout << file.oldFileName << ": no time information found" << "\n";
 				continue;
 			}
 			file.newFileName = EncodeDate(OutputFormat, t);
