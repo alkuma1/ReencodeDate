@@ -321,7 +321,8 @@ void ParseCommandLine(int argc, char* argv[])
 
 	if (vm.size() == 0 || vm.count("help")) {
 		stringstream ss; 
-		ss << desc << "\n";
+		ss << "Usage: time2name DIRECTORY <-i INPUT_FILENAME_PATTERN> <-o OUTPUT_FILENAME_PATTERN> [-r] [-f] [-t]" << "\n\n" << 
+			desc << "\n\n" << "See ReadMe.txt for detailed description." << "\n";
 		throw runtime_error(ss.str());
 	}
 	if (vm.count("recursive")) {

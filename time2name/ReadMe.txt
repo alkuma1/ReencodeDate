@@ -7,7 +7,7 @@ The utility looks for file creation date/time in the following order:
 
 Command line looks like this:
 
-time2name [DIRECTORY] -i [INPUT_FILENAME_PATTERN] -o [OUTPUT_FILENAME_PATTERN] -r -f -t
+time2name DIRECTORY <-i INPUT_FILENAME_PATTERN> <-o OUTPUT_FILENAME_PATTERN> [-r] [-f] [-t]
 
 -i, --input [INPUT_FILENAME_PATTERN]
 input file name pattern specifiying which files will be renamed.
