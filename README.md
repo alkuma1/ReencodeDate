@@ -73,10 +73,10 @@ In a situation when there are more than one file with the same creation datetime
 Instead, it appends an unique code to the filename. So, if we have 3 JPG files created on 17 April 2005 at 23:54:32,
 the resulting file names will look like this:
 
-    _20050417_235432.jpg_
+    20050417_235432.jpg
     
-    _20050417_235432_27851687.jpg_
+    20050417_235432_27851687.jpg
     
-    _20050417_235432_27851718.jpg_
+    20050417_235432_27851718.jpg
     
 
